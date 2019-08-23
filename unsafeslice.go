@@ -1,3 +1,4 @@
+// Package unsafeslice contains functions for zero-copy casting between typed slices and byte slices.
 package unsafeslice
 
 import (
@@ -19,41 +20,81 @@ func newRawSliceHeader(sh *reflect.SliceHeader, b []byte, stride int) *reflect.S
 	return sh
 }
 
-func newSliceHeader(b []byte, stride int) unsafe.Pointer {
+func newSliceHeaderFromBytes(b []byte, stride int) unsafe.Pointer {
 	sh := &reflect.SliceHeader{}
 	return unsafe.Pointer(newRawSliceHeader(sh, b, stride))
 }
 
+func newSliceHeader(p unsafe.Pointer, size int) unsafe.Pointer {
+	return unsafe.Pointer(&reflect.SliceHeader{
+		Len:  size,
+		Cap:  size,
+		Data: uintptr(p),
+	})
+}
+
 func Uint64SliceFromByteSlice(b []byte) []uint64 {
-	return *(*[]uint64)(newSliceHeader(b, Uint64Size))
+	return *(*[]uint64)(newSliceHeaderFromBytes(b, Uint64Size))
+}
+
+func ByteSliceFromUint64Slice(b []uint64) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint64Size))
 }
 
 func Int64SliceFromByteSlice(b []byte) []int64 {
-	return *(*[]int64)(newSliceHeader(b, Uint64Size))
+	return *(*[]int64)(newSliceHeaderFromBytes(b, Uint64Size))
+}
+
+func ByteSliceFromInt64Slice(b []int64) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint64Size))
 }
 
 func Uint32SliceFromByteSlice(b []byte) []uint32 {
-	return *(*[]uint32)(newSliceHeader(b, Uint32Size))
+	return *(*[]uint32)(newSliceHeaderFromBytes(b, Uint32Size))
+}
+
+func ByteSliceFromUint32Slice(b []uint32) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint32Size))
 }
 
 func Int32SliceFromByteSlice(b []byte) []int32 {
-	return *(*[]int32)(newSliceHeader(b, Uint32Size))
+	return *(*[]int32)(newSliceHeaderFromBytes(b, Uint32Size))
+}
+
+func ByteSliceFromInt32Slice(b []int32) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint32Size))
 }
 
 func Uint16SliceFromByteSlice(b []byte) []uint16 {
-	return *(*[]uint16)(newSliceHeader(b, Uint16Size))
+	return *(*[]uint16)(newSliceHeaderFromBytes(b, Uint16Size))
+}
+
+func ByteSliceFromUint16Slice(b []uint32) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
 }
 
 func Int16SliceFromByteSlice(b []byte) []int16 {
-	return *(*[]int16)(newSliceHeader(b, Uint16Size))
+	return *(*[]int16)(newSliceHeaderFromBytes(b, Uint16Size))
+}
+
+func ByteSliceFromInt16Slice(b []int32) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
 }
 
 func Uint8SliceFromByteSlice(b []byte) []uint8 {
-	return *(*[]uint8)(newSliceHeader(b, Uint8Size))
+	return *(*[]uint8)(newSliceHeaderFromBytes(b, Uint8Size))
+}
+
+func ByteSliceFromUint8Slice(b []uint8) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
 }
 
 func Int8SliceFromByteSlice(b []byte) []int8 {
-	return *(*[]int8)(newSliceHeader(b, Uint8Size))
+	return *(*[]int8)(newSliceHeaderFromBytes(b, Uint8Size))
+}
+
+func ByteSliceFromInt8Slice(b []int8) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
 }
 
 // Create a slice of structs from a slice of bytes.
@@ -62,6 +103,8 @@ func Int8SliceFromByteSlice(b []byte) []int8 {
 // 		StructSliceFromByteSlice(bytes, &v)
 //
 // Elements in the byte array must be padded correctly. See unsafe.AlignOf, et al.
+//
+// Note that this is slower than the scalar primitives above as it uses reflection.
 func StructSliceFromByteSlice(b []byte, out interface{}) {
 	ptr := reflect.ValueOf(out)
 	if ptr.Kind() != reflect.Ptr {
@@ -82,6 +125,9 @@ func StructSliceFromByteSlice(b []byte, out interface{}) {
 	newRawSliceHeader(sh, b, stride)
 }
 
+// ByteSliceFromStructSlice does what you would expect.
+//
+// Note that this is slower than the scalar primitives above as it uses reflection.
 func ByteSliceFromStructSlice(s interface{}) []byte {
 	slice := reflect.ValueOf(s)
 	if slice.Kind() != reflect.Slice {
