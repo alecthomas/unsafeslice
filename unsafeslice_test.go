@@ -3,8 +3,9 @@ package unsafeslice
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnsafeSlice64(t *testing.T) {
@@ -75,4 +76,16 @@ func TestByteSliceFromStructSlice(t *testing.T) {
 
 	b = ByteSliceFromStructSlice([]Struct{})
 	require.Equal(t, len(b), 0)
+}
+
+func TestByteSliceFromString(t *testing.T) {
+	s := "life after 💀"
+	b := ByteSliceFromString(s)
+	require.Equal(t, s, string(b))
+}
+
+func TestStringFromByteSlice(t *testing.T) {
+	b := []byte("life after 💀")
+	s := StringFromByteSlice(b)
+	require.Equal(t, s, string(b))
 }

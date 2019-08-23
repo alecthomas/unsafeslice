@@ -6,6 +6,7 @@ import (
 	"unsafe"
 )
 
+// Useful constants.
 const (
 	Uint64Size = 8
 	Uint32Size = 4
@@ -95,6 +96,19 @@ func Int8SliceFromByteSlice(b []byte) []int8 {
 
 func ByteSliceFromInt8Slice(b []int8) []byte {
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
+}
+
+func ByteSliceFromString(s string) []byte {
+	h := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(h.Data), len(s)*Uint8Size))
+}
+
+func StringFromByteSlice(b []byte) string {
+	h := reflect.StringHeader{
+		Data: uintptr(unsafe.Pointer(&b[0])),
+		Len:  len(b),
+	}
+	return *(*string)(unsafe.Pointer(&h))
 }
 
 // Create a slice of structs from a slice of bytes.
