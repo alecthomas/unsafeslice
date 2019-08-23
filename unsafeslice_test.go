@@ -3,7 +3,7 @@ package unsafeslice
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/stretchrcom/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -12,7 +12,7 @@ func TestUnsafeSlice64(t *testing.T) {
 	d := []uint64{0xdead, 0xbeef, 0xb334}
 	binary.Write(w, binary.LittleEndian, d)
 	v := Uint64SliceFromByteSlice(w.Bytes())
-	assert.Equal(t, d, v)
+	require.Equal(t, d, v)
 }
 
 func TestUnsafeSlice32(t *testing.T) {
@@ -20,7 +20,7 @@ func TestUnsafeSlice32(t *testing.T) {
 	d := []uint32{0xdead, 0xbeef, 0xb334}
 	binary.Write(w, binary.LittleEndian, d)
 	v := Uint32SliceFromByteSlice(w.Bytes())
-	assert.Equal(t, d, v)
+	require.Equal(t, d, v)
 }
 
 func TestUnsafeSlice16(t *testing.T) {
@@ -28,7 +28,7 @@ func TestUnsafeSlice16(t *testing.T) {
 	d := []uint16{0xdead, 0xbeef, 0xb334}
 	binary.Write(w, binary.LittleEndian, d)
 	v := Uint16SliceFromByteSlice(w.Bytes())
-	assert.Equal(t, d, v)
+	require.Equal(t, d, v)
 }
 
 type Struct struct {
@@ -53,14 +53,14 @@ func makeTestStructBuffer() []byte {
 func TestUnsafeSliceStruct(t *testing.T) {
 	var v []Struct
 	b := makeTestStructBuffer()
-	assert.Nil(t, v)
+	require.Nil(t, v)
 	StructSliceFromByteSlice(b, &v)
-	assert.NotNil(t, v)
-	assert.Equal(t, len(v), 2)
-	assert.Equal(t, v[0].A, uint8(0xab))
-	assert.Equal(t, v[0].B, uint32(0xdead))
-	assert.Equal(t, v[1].A, uint8(0xce))
-	assert.Equal(t, v[1].B, uint32(0xbeef))
+	require.NotNil(t, v)
+	require.Equal(t, len(v), 2)
+	require.Equal(t, v[0].A, uint8(0xab))
+	require.Equal(t, v[0].B, uint32(0xdead))
+	require.Equal(t, v[1].A, uint8(0xce))
+	require.Equal(t, v[1].B, uint32(0xbeef))
 }
 
 func TestByteSliceFromStructSlice(t *testing.T) {
@@ -69,10 +69,10 @@ func TestByteSliceFromStructSlice(t *testing.T) {
 		Struct{0xce, 0xbeef},
 	}
 	b := ByteSliceFromStructSlice(a)
-	assert.Equal(t, 16, len(b))
-	assert.Equal(t, makeTestStructBuffer(), b)
-	assert.True(t, bytes.Compare(makeTestStructBuffer(), b) == 0)
+	require.Equal(t, 16, len(b))
+	require.Equal(t, makeTestStructBuffer(), b)
+	require.True(t, bytes.Compare(makeTestStructBuffer(), b) == 0)
 
 	b = ByteSliceFromStructSlice([]Struct{})
-	assert.Equal(t, len(b), 0)
+	require.Equal(t, len(b), 0)
 }
