@@ -70,7 +70,7 @@ func Uint16SliceFromByteSlice(b []byte) []uint16 {
 	return *(*[]uint16)(newSliceHeaderFromBytes(b, Uint16Size))
 }
 
-func ByteSliceFromUint16Slice(b []uint32) []byte {
+func ByteSliceFromUint16Slice(b []uint16) []byte {
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
 }
 
@@ -78,16 +78,8 @@ func Int16SliceFromByteSlice(b []byte) []int16 {
 	return *(*[]int16)(newSliceHeaderFromBytes(b, Uint16Size))
 }
 
-func ByteSliceFromInt16Slice(b []int32) []byte {
+func ByteSliceFromInt16Slice(b []int16) []byte {
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
-}
-
-func Uint8SliceFromByteSlice(b []byte) []uint8 {
-	return *(*[]uint8)(newSliceHeaderFromBytes(b, Uint8Size))
-}
-
-func ByteSliceFromUint8Slice(b []uint8) []byte {
-	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
 }
 
 func Int8SliceFromByteSlice(b []byte) []int8 {
