@@ -82,6 +82,14 @@ func ByteSliceFromInt16Slice(b []int16) []byte {
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
 }
 
+func Uint8SliceFromByteSlice(b []byte) []uint8 {
+	return *(*[]uint8)(newSliceHeaderFromBytes(b, Uint8Size))
+}
+
+func ByteSliceFromUint8Slice(b []uint8) []byte {
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
+}
+
 func Int8SliceFromByteSlice(b []byte) []int8 {
 	return *(*[]int8)(newSliceHeaderFromBytes(b, Uint8Size))
 }
@@ -96,11 +104,11 @@ func ByteSliceFromString(s string) []byte {
 }
 
 func StringFromByteSlice(b []byte) string {
-	h := reflect.StringHeader{
+	h := &reflect.StringHeader{
 		Data: uintptr(unsafe.Pointer(&b[0])),
 		Len:  len(b),
 	}
-	return *(*string)(unsafe.Pointer(&h))
+	return *(*string)(unsafe.Pointer(h))
 }
 
 // Create a slice of structs from a slice of bytes.
