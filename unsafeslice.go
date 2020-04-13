@@ -83,11 +83,11 @@ func ByteSliceFromInt16Slice(b []int16) []byte {
 }
 
 func Uint8SliceFromByteSlice(b []byte) []uint8 {
-	return *(*[]uint8)(newSliceHeaderFromBytes(b, Uint8Size))
+	return b
 }
 
 func ByteSliceFromUint8Slice(b []uint8) []byte {
-	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
+	return b
 }
 
 func Int8SliceFromByteSlice(b []byte) []int8 {
