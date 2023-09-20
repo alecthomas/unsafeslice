@@ -15,9 +15,15 @@ const (
 )
 
 func newRawSliceHeader(sh *reflect.SliceHeader, b []byte, stride int) *reflect.SliceHeader {
-	sh.Len = len(b) / stride
-	sh.Cap = len(b) / stride
-	sh.Data = (uintptr)(unsafe.Pointer(&b[0]))
+	if len(b) == 0 {
+		sh.Len = 0
+		sh.Cap = 0
+		sh.Data = 0
+	} else {
+		sh.Len = len(b) / stride
+		sh.Cap = len(b) / stride
+		sh.Data = (uintptr)(unsafe.Pointer(&b[0]))
+	}
 	return sh
 }
 
@@ -39,6 +45,9 @@ func Uint64SliceFromByteSlice(b []byte) []uint64 {
 }
 
 func ByteSliceFromUint64Slice(b []uint64) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint64Size))
 }
 
@@ -47,6 +56,9 @@ func Int64SliceFromByteSlice(b []byte) []int64 {
 }
 
 func ByteSliceFromInt64Slice(b []int64) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint64Size))
 }
 
@@ -55,6 +67,9 @@ func Uint32SliceFromByteSlice(b []byte) []uint32 {
 }
 
 func ByteSliceFromUint32Slice(b []uint32) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint32Size))
 }
 
@@ -63,6 +78,9 @@ func Int32SliceFromByteSlice(b []byte) []int32 {
 }
 
 func ByteSliceFromInt32Slice(b []int32) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint32Size))
 }
 
@@ -71,6 +89,9 @@ func Uint16SliceFromByteSlice(b []byte) []uint16 {
 }
 
 func ByteSliceFromUint16Slice(b []uint16) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
 }
 
@@ -79,6 +100,9 @@ func Int16SliceFromByteSlice(b []byte) []int16 {
 }
 
 func ByteSliceFromInt16Slice(b []int16) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint16Size))
 }
 
@@ -95,6 +119,9 @@ func Int8SliceFromByteSlice(b []byte) []int8 {
 }
 
 func ByteSliceFromInt8Slice(b []int8) []byte {
+	if len(b) == 0 {
+		return nil
+	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
 }
 
@@ -104,6 +131,9 @@ func ByteSliceFromString(s string) []byte {
 }
 
 func StringFromByteSlice(b []byte) string {
+	if len(b) == 0 {
+		return ""
+	}
 	h := &reflect.StringHeader{
 		Data: uintptr(unsafe.Pointer(&b[0])),
 		Len:  len(b),

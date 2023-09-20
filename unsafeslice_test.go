@@ -137,3 +137,16 @@ func TestStringFromByteSlice(t *testing.T) {
 	s := StringFromByteSlice(b)
 	require.Equal(t, s, string(b))
 }
+
+func TestEmptyUnsafeSliceUint64(t *testing.T) {
+	require.Equal(t, []uint64(nil), Uint64SliceFromByteSlice([]byte{}))
+	require.Equal(t, []uint64(nil), Uint64SliceFromByteSlice(nil))
+	require.Equal(t, []byte(nil), ByteSliceFromUint64Slice(nil))
+	require.Equal(t, []byte(nil), ByteSliceFromUint64Slice([]uint64{}))
+}
+
+func TestEmptyStringFromByteSlice(t *testing.T) {
+	var b []byte
+	s := StringFromByteSlice(b)
+	require.Equal(t, s, string(b))
+}
