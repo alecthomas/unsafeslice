@@ -12,6 +12,9 @@ const (
 	Uint32Size = 4
 	Uint16Size = 2
 	Uint8Size  = 1
+
+	Float32Size = 4
+	Float64Size = 8
 )
 
 func newRawSliceHeader(sh *reflect.SliceHeader, b []byte, stride int) *reflect.SliceHeader {
@@ -123,6 +126,28 @@ func ByteSliceFromInt8Slice(b []int8) []byte {
 		return nil
 	}
 	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Uint8Size))
+}
+
+func Float32SliceFromByteSlice(b []byte) []float32 {
+	return *(*[]float32)(newSliceHeaderFromBytes(b, Float32Size))
+}
+
+func ByteSliceFromFloat32Slice(b []float32) []byte {
+	if len(b) == 0 {
+		return nil
+	}
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Float32Size))
+}
+
+func Float64SliceFromByteSlice(b []byte) []float64 {
+	return *(*[]float64)(newSliceHeaderFromBytes(b, Float64Size))
+}
+
+func ByteSliceFromFloat64Slice(b []float64) []byte {
+	if len(b) == 0 {
+		return nil
+	}
+	return *(*[]byte)(newSliceHeader(unsafe.Pointer(&b[0]), len(b)*Float64Size))
 }
 
 func ByteSliceFromString(s string) []byte {
